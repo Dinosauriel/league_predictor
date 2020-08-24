@@ -1,4 +1,5 @@
-import numpy as np
+import riot_api as api
 import config as cfg
 
-print(cfg.api_key)
+
+print(api.getAccountId(cfg.root_summoner_name))
