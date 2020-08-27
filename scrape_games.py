@@ -3,6 +3,8 @@ import riot_api as api
 import config as cfg
 
 
+NUMBER_OF_GAMES = 1000
+
 account_id = api.getAccountId(cfg.root_summoner_name)
 print("fetched account id: " + account_id)
 
@@ -16,9 +18,6 @@ for match in match_history:
 	match_history_ids.append(match['gameId'])
 
 #print(match_history_ids)
-
-
-match_info = api.getMatchInfo(match_history_ids[0])
 
 def extract_comp(match_info):
 	game_id = match_info["gameId"]
@@ -36,8 +35,9 @@ def extract_comp(match_info):
 
 	return np.concatenate(([game_id, blue_wins], blue_champs, red_champs))
 
-X = np.empty((10, 12))
-for i, match_id in enumerate(match_history_ids[0:10]):
+X = np.empty((100, 12))
+for i, match_id in enumerate(match_history_ids):
+	print("fetching match " + str(i))
 	match_info = api.getMatchInfo(match_id)
 	X[i] = extract_comp(match_info)
 

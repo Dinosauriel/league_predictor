@@ -1,22 +1,22 @@
 import config as cfg
 import requests
 import json
+import time
 
 HOST = "https://" + cfg.host
 HEADERS = {"X-Riot-Token": cfg.api_key}
 
-#path: resource without hostname
-def get(path: str, parameters: dict={}):
-	r = requests.get(HOST + path, headers=HEADERS, params=parameters)
+def get_raw(url: str, headers={}, parameters: dict={}):
+	r = requests.get(url, headers=headers, params=parameters)
 	#raise an error if response is not ok
 	r.raise_for_status()
 	return json.loads(r.text)
 
-def get_raw(url: str):
-	r = requests.get(url)
-	#raise an error if response is not ok
-	r.raise_for_status()
-	return json.loads(r.text)
+#path: resource without hostname
+def get(path: str, parameters: dict={}):
+	#rate limiting
+	time.sleep(max([120.0/cfg.requests_per_2_minutes, 1.0/cfg.requests_per_sec]))
+	return get_raw(HOST + path, headers=HEADERS, parameters=parameters)
 
 
 def getAccountId(summoner_name: str):

@@ -11,3 +11,7 @@ champions_json_url = "http://ddragon.leagueoflegends.com/cdn/10.16.1/data/en_US/
 #queue id's - what queue id's should be scraped?
 #list of queue ids: http://static.developer.riotgames.com/docs/lol/queues.json
 queue_ids = [400, 420, 430, 440]
+
+#request limits for the riot api
+requests_per_sec = 20
+requests_per_2_minutes = 100
