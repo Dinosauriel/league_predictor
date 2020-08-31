@@ -10,8 +10,6 @@ from tensorflow.keras.layers import Input, Dense, Concatenate
 champion_ids, champion_names = api.getChampionLists()
 number_of_champions = len(champion_ids)
 
-print(champion_ids)
-
 def one_hot(n, k):
 	v = np.zeros(n)
 	v[k] = 1
@@ -66,3 +64,34 @@ def get_classifier():
 	return classifier
 
 
+games = np.genfromtxt("games.csv")
+
+ids = games[:,0]
+y = games[:,1]
+comps = games[:,2:]
+
+print(ids.shape)
+print(y.shape)
+
+X = {
+	"b1_input": np.array([vector_from_champion_id(id) for id in games[:,2]]),
+	"b2_input": np.array([vector_from_champion_id(id) for id in games[:,3]]),
+	"b3_input": np.array([vector_from_champion_id(id) for id in games[:,4]]),
+	"b4_input": np.array([vector_from_champion_id(id) for id in games[:,5]]),
+	"b5_input": np.array([vector_from_champion_id(id) for id in games[:,6]]),
+	"r1_input": np.array([vector_from_champion_id(id) for id in games[:,7]]),
+	"r2_input": np.array([vector_from_champion_id(id) for id in games[:,8]]),
+	"r3_input": np.array([vector_from_champion_id(id) for id in games[:,9]]),
+	"r4_input": np.array([vector_from_champion_id(id) for id in games[:,10]]),
+	"r5_input": np.array([vector_from_champion_id(id) for id in games[:,11]])
+}
+
+print(X["r5_input"].shape)
+
+gpus = tf.config.experimental.list_physical_devices('GPU')
+#print(gpus)
+tf.config.experimental.set_memory_growth(gpus[0], True)
+
+classifier = get_classifier()
+classifier.summary()
+classifier.fit(X, y, epochs=100, validation_split=0.9)
