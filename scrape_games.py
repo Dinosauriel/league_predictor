@@ -20,7 +20,9 @@ def extract_account_ids(match_info):
 
 
 #target number of games
-N = 100
+N = cfg.games_per_scrape
+print("scraping " + str(N) + " new games...")
+
 scraped_games = set()
 visited_accounts = set()
 X = np.empty((N, 12))
@@ -70,7 +72,7 @@ while len(scraped_games) < N:
 			break
 
 		if match["gameId"] in scraped_games or match["gameId"] in cached_games:
-			print("game already scraped. skipping...")
+			print("game with id " + str(match["gameId"]) + " already scraped. skipping...")
 			continue
 
 		try:
