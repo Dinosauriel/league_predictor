@@ -82,8 +82,9 @@ while len(scraped_games) < N:
 			print("match fetch request failed... skipping...")
 			continue
 
-		with open("lake/" + str(match["gameId"]) + ".json", "w") as f:
-			json.dump(match_info, f)
+		if cfg.should_lake_games:
+			with open("lake/" + str(match["gameId"]) + ".json", "w") as f:
+				json.dump(match_info, f)
 
 		X[len(scraped_games)] = extract_comp(match_info)
 		scraped_games.add(match["gameId"])
