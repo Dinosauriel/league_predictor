@@ -1,6 +1,8 @@
 import numpy as np
 import riot_api as api
 import config as cfg
+import os.path
+import pickle
 
 def extract_comp(match_info):
 	game_id = match_info["gameId"]
@@ -16,14 +18,30 @@ def extract_account_ids(match_info):
 	ids = [x["player"]["accountId"] for x in match_info["participantIdentities"]]
 	return set(ids)
 
-#number of games
-N = 150
+
+#target number of games
+N = 100
 scraped_games = set()
 visited_accounts = set()
 X = np.empty((N, 12))
 
-#perform "graph search"
+#load previously scraped games from cache if possible
+cached_games = set()
+if os.path.isfile("scrape_cache/scraped_game_ids"):
+	with open("scrape_cache/scraped_game_ids", "rb") as f:
+		cached_games = pickle.load(f)
+		print("loading " + str(len(cached_games)) + " scraped game ids from cache")
+
 next_account_ids = {api.getAccountId(cfg.root_summoner_name)}
+
+#load next accounts from cache if possible
+if os.path.isfile("scrape_cache/next_account_ids"):
+	with open("scrape_cache/next_account_ids", "rb") as f:
+		cached = pickle.load(f)
+	print("loading " + str(len(cached)) + " next accound ids from cache")
+	next_account_ids.update(cached)
+
+#perform "graph search"
 
 while len(scraped_games) < N:
 
@@ -37,19 +55,29 @@ while len(scraped_games) < N:
 	print("evaluating account no: " + str(len(visited_accounts)))
 
 
-	match_history = api.getMatchHistory(account_id)
-	print("fetched " + str(len(match_history)) + " most recent matches for account id " + account_id)
+	try:
+		match_history = api.getMatchHistory(str(account_id))
+	except Exception as e:
+		print("could not fetch match history for account id " + str(account_id) + ". skipping...")
+		continue
+
+	print("fetched " + str(len(match_history)) + " most recent matches for account id " + str(account_id))
 
 	for match in match_history:
-		print("there are " + str(len(scraped_games)) + " scraped games, and " + str(len(next_account_ids)) + " next accounts")
+		print("there are " + str(len(scraped_games)) + " newly scraped games, and " + str(len(next_account_ids)) + " next accounts")
 
 		if len(scraped_games) >= N:
 			break
 
-		if match["gameId"] in scraped_games:
+		if match["gameId"] in scraped_games or match["gameId"] in cached_games:
+			print("game already scraped. skipping...")
 			continue
 
-		match_info = api.getMatchInfo(match["gameId"])
+		try:
+			match_info = api.getMatchInfo(match["gameId"])
+		except Exception as e:
+			print("match fetch request failed... skipping...")
+			continue
 
 		X[len(scraped_games)] = extract_comp(match_info)
 		scraped_games.add(match["gameId"])
@@ -57,4 +85,13 @@ while len(scraped_games) < N:
 		new_account_ids = extract_account_ids(match_info).difference(visited_accounts)
 		next_account_ids.update(new_account_ids)
 
-np.savetxt("games.csv", X, fmt="%d")
+#save state to cache to continue where we left off last time
+with open("scrape_cache/scraped_game_ids", "wb") as f:
+	pickle.dump(cached_games.union(scraped_games), f)
+with open("scrape_cache/next_account_ids", "wb") as f:
+	pickle.dump(next_account_ids, f)
+
+#append new games to file
+f = open("games.csv", "a")
+np.savetxt(f, X, fmt="%d")
+f.close()

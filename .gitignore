@@ -2,3 +2,4 @@ __pycache__
 config.py
 example_game.json
 games.csv
+scrape_cache
