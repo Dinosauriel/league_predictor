@@ -3,6 +3,7 @@ import riot_api as api
 import config as cfg
 import os.path
 import pickle
+import json
 
 def extract_comp(match_info):
 	game_id = match_info["gameId"]
@@ -80,6 +81,9 @@ while len(scraped_games) < N:
 		except Exception as e:
 			print("match fetch request failed... skipping...")
 			continue
+
+		with open("lake/" + str(match["gameId"]) + ".json", "w") as f:
+			json.dump(match_info, f)
 
 		X[len(scraped_games)] = extract_comp(match_info)
 		scraped_games.add(match["gameId"])
