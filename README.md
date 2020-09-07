@@ -26,10 +26,10 @@ To get started, copy the file `config.example.py` to `config.py` . In `config.py
 asdf
 
 ### `scrape_games.py`
-asdf
+This script uses the Riot API to search for games. It stores any scraped games as json in the folder `lake/`. In one execution, it scrapes as many games as defined in `config.games_per_scrape`. It keeps state in the folder `scrape_cache/`, so you can run the script multiple times without scraping duplicate games. To reset, just delete the files in `scrape_cache/`.
 
 ### `preprocess_games.py`
-This script iterates through all the games in the folder `lake/` and extracts the relevant information for the neural net. It stores the output in `processed_games.csv`.
+This script iterates through all the games in the folder `lake/` and extracts the relevant information for the neural net. It stores (appends) the output in `processed_games.csv`.
 
 ### `train_nn.py`
 asdf

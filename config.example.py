@@ -18,5 +18,3 @@ requests_per_2_minutes = 100
 
 #how many games should be scraped when scrape_games is run once?
 games_per_scrape = 1800
-#should games additionally be stored as json during scraping for potential later use?
-should_lake_games = True
