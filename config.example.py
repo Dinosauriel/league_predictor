@@ -1,4 +1,4 @@
-#your api key obtained from the riot api
+#your api key obtained from the riot api (https://developer.riotgames.com/)
 api_key = "RGAPI-AAAAAA-AAAAAAA"
 #summoner name for the match search root (to obtain training data)
 root_summoner_name = "summoner name"
