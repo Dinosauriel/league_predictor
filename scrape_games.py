@@ -20,6 +20,11 @@ def extract_account_ids(match_info):
 	return set(ids)
 
 
+if cfg.should_lake_games:
+	if not os.path.isdir("lake"):
+		os.mkdir("lake")
+
+
 #target number of games
 N = cfg.games_per_scrape
 print("scraping " + str(N) + " new games...")
