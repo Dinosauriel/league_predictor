@@ -29,7 +29,7 @@ asdf
 asdf
 
 ### `preprocess_games.py`
-asdf
+This script iterates through all the games in the folder `lake/` and extracts the relevant information for the neural net. It stores the output in `processed_games.csv`.
 
 ### `train_nn.py`
 asdf
