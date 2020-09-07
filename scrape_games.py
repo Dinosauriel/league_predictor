@@ -9,6 +9,18 @@ def extract_account_ids(match_info):
 	ids = [x["player"]["accountId"] for x in match_info["participantIdentities"]]
 	return set(ids)
 
+def save_to_cache(cached_games, scraped_games, next_account_ids):
+	print("saving " + str(len(scraped_games)) + " scraped games, " + str(len(cached_games)) + " cached games and " + str(len(next_account_ids)) + " next account ids to cache.")
+
+	if not os.path.isdir("scrape_cache"):
+		os.mkdir("scrape_cache")
+
+	#save state to cache to continue where we left off last time
+	with open("scrape_cache/scraped_game_ids", "wb") as f:
+		pickle.dump(cached_games.union(scraped_games), f)
+	with open("scrape_cache/next_account_ids", "wb") as f:
+		pickle.dump(next_account_ids, f)
+
 
 if not os.path.isdir("lake"):
 	os.mkdir("lake")
@@ -83,11 +95,8 @@ while len(scraped_games) < N:
 		new_account_ids = extract_account_ids(match_info).difference(visited_accounts)
 		next_account_ids.update(new_account_ids)
 
-if not os.path.isdir("scrape_cache"):
-	os.mkdir("scrape_cache")
+		#backup every 10'000 games
+		if len(scraped_games) % 10000 == 0:
+			save_to_cache(cached_games, scraped_games, next_account_ids)
 
-#save state to cache to continue where we left off last time
-with open("scrape_cache/scraped_game_ids", "wb") as f:
-	pickle.dump(cached_games.union(scraped_games), f)
-with open("scrape_cache/next_account_ids", "wb") as f:
-	pickle.dump(next_account_ids, f)
+save_to_cache(cached_games, scraped_games, next_account_ids)
