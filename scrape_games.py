@@ -92,8 +92,11 @@ while len(scraped_games) < N:
 
 		scraped_games.add(match["gameId"])
 
-		new_account_ids = extract_account_ids(match_info).difference(visited_accounts)
-		next_account_ids.update(new_account_ids)
+		try:
+			new_account_ids = extract_account_ids(match_info).difference(visited_accounts)
+			next_account_ids.update(new_account_ids)
+		except Exception as e:
+			print("could not extract new accounts from game " + str(match["gameId"]))
 
 		#backup every 10'000 games
 		if len(scraped_games) % 10000 == 0:
