@@ -15,7 +15,7 @@ def preprocess_game(game) -> np.array:
 
 def preprocess_games():
 	i = 0
-	with open("processed_games.csv", "a") as output_file:
+	with open("games.csv", "a") as output_file:
 		for game_json_path in glob.iglob("lake/*.json", recursive=False):
 			i += 1
 			if i % 100 == 0:
