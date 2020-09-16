@@ -10,6 +10,8 @@ Training a NN to predict my league of legends games :)
 	- numpy
 	- glob
 	- os
+	- pydot (for model plotting)
+- Graphviz (for model plotting) [https://graphviz.gitlab.io/download/]
 
 ### GPU Support (optional)
 For GPU support, you will need to install the required GPU drivers, CUDA Toolkit etc. Refer to the following link for installation: [https://www.tensorflow.org/install/gpu]

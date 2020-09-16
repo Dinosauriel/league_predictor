@@ -1,11 +1,12 @@
 import riot_api as api
 import numpy as np
 import config as cfg
+import os
 import tensorflow as tf
 from tensorflow.keras import Model
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Input, Dense, Concatenate
-
+from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout
+from contextlib import redirect_stdout
 
 champion_ids, champion_names = api.getChampionLists()
 number_of_champions = len(champion_ids)
@@ -59,39 +60,49 @@ def get_classifier():
 
 	classifier = Model(inputs=[input_b1, input_b2, input_b3, input_b4, input_b5, input_r1, input_r2, input_r3, input_r4, input_r5], outputs=out)
 
-	classifier.compile(optimizer='Adam', loss='binary_crossentropy', metrics=['accuracy'])
+	classifier.compile(optimizer='Adam', loss='binary_crossentropy', metrics=['binary_accuracy'])
 
 	return classifier
 
+def output_model(model, name:str):
+	if not os.path.isdir("model"):
+		os.mkdir("model")
 
+	with open("model/" + name + ".summary", "w") as f:
+		with redirect_stdout(f):
+			model.summary()
+
+	tf.keras.utils.plot_model(model, to_file="model/" + name + ".png", show_shapes=True, dpi=200)
+	model.save("model/" + name + ".weights")
+
+def arrange_input(games):
+	return {
+		"b1_input": np.array([vector_from_champion_id(id) for id in games[:,2]]),
+		"b2_input": np.array([vector_from_champion_id(id) for id in games[:,3]]),
+		"b3_input": np.array([vector_from_champion_id(id) for id in games[:,4]]),
+		"b4_input": np.array([vector_from_champion_id(id) for id in games[:,5]]),
+		"b5_input": np.array([vector_from_champion_id(id) for id in games[:,6]]),
+		"r1_input": np.array([vector_from_champion_id(id) for id in games[:,7]]),
+		"r2_input": np.array([vector_from_champion_id(id) for id in games[:,8]]),
+		"r3_input": np.array([vector_from_champion_id(id) for id in games[:,9]]),
+		"r4_input": np.array([vector_from_champion_id(id) for id in games[:,10]]),
+		"r5_input": np.array([vector_from_champion_id(id) for id in games[:,11]])
+	}
+
+
+print("reading and shuffling games..")
 games = np.genfromtxt("games.csv")
+np.random.shuffle(games)
 
 ids = games[:,0]
 y = games[:,1]
-comps = games[:,2:]
-
-print(ids.shape)
-print(y.shape)
-
-X = {
-	"b1_input": np.array([vector_from_champion_id(id) for id in games[:,2]]),
-	"b2_input": np.array([vector_from_champion_id(id) for id in games[:,3]]),
-	"b3_input": np.array([vector_from_champion_id(id) for id in games[:,4]]),
-	"b4_input": np.array([vector_from_champion_id(id) for id in games[:,5]]),
-	"b5_input": np.array([vector_from_champion_id(id) for id in games[:,6]]),
-	"r1_input": np.array([vector_from_champion_id(id) for id in games[:,7]]),
-	"r2_input": np.array([vector_from_champion_id(id) for id in games[:,8]]),
-	"r3_input": np.array([vector_from_champion_id(id) for id in games[:,9]]),
-	"r4_input": np.array([vector_from_champion_id(id) for id in games[:,10]]),
-	"r5_input": np.array([vector_from_champion_id(id) for id in games[:,11]])
-}
-
-print(X["r5_input"].shape)
+X = arrange_input(games)
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
 #print(gpus)
 tf.config.experimental.set_memory_growth(gpus[0], True)
 
 classifier = get_classifier()
-classifier.summary()
-classifier.fit(X, y, epochs=100, validation_split=0.9)
+classifier.fit(X, y, epochs=5, validation_split=0.1, batch_size=16)
+
+output_model(classifier, "classifier")
