@@ -8,6 +8,7 @@ HEADERS = {"X-Riot-Token": cfg.api_key}
 
 def get_raw(url: str, headers={}, parameters: dict={}):
 	r = requests.get(url, headers=headers, params=parameters)
+	print(r.url)
 	#raise an error if response is not ok
 	r.raise_for_status()
 	return json.loads(r.text)
@@ -23,7 +24,7 @@ def getAccountId(summoner_name: str):
 	return get("/lol/summoner/v4/summoners/by-name/" + summoner_name)["accountId"]
 
 def getMatchHistory(account_id: str):
-	return get("/lol/match/v4/matchlists/by-account/" + account_id, {'queue': cfg.queue_ids})["matches"]
+	return get("/lol/match/v4/matchlists/by-account/" + account_id, parameters={'queue': cfg.queue_ids})["matches"]
 
 def getMatchInfo(match_id: int):
 	return get("/lol/match/v4/matches/" + str(match_id))
