@@ -2,6 +2,10 @@ import glob
 import json
 import numpy as np
 
+#returns True if the game should be preprocessed and added to the output
+#returns False if the game should be skipped
+def filter_game(game) -> bool:
+	return len(game["participants"]) == 10
 
 def preprocess_game(game) -> np.array:
 	game_id = game["gameId"]
@@ -22,6 +26,8 @@ def preprocess_games():
 				print("processing game " + str(i) + ": " + game_json_path)
 			with open(game_json_path, "r") as game_json:
 				game = json.load(game_json)
+				if not filter_game(game):
+					continue
 				processed = preprocess_game(game)
 				np.savetxt(output_file, [processed], fmt="%d")
 
