@@ -18,3 +18,6 @@ requests_per_2_minutes = 100
 
 #how many games should be scraped when scrape_games is run once?
 games_per_scrape = 1800
+
+#number of threads for executing statistics
+number_of_threads = 8

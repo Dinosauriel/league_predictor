@@ -4,4 +4,5 @@ example_game.json
 games.csv
 scrape_cache
 lake
+stats.json
 model
