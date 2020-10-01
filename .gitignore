@@ -6,3 +6,4 @@ scrape_cache
 lake
 stats.json
 model
+tmp.py
