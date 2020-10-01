@@ -1,4 +1,5 @@
 import riot_api as api
+from champions import champion_library
 import numpy as np
 import config as cfg
 import os
@@ -8,30 +9,21 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout
 from contextlib import redirect_stdout
 
-champion_ids, champion_names = api.getChampionLists()
-number_of_champions = len(champion_ids)
 
-def one_hot(n, k):
-	v = np.zeros(n)
-	v[k] = 1
-	return v
-
-def vector_from_champion_id(id: int):
-	return one_hot(number_of_champions, champion_ids.index(id))
-
+champ_lib = champion_library()
 
 def get_classifier():
-	input_b1 = Input(name='b1_input', shape=(number_of_champions))
-	input_b2 = Input(name='b2_input', shape=(number_of_champions))
-	input_b3 = Input(name='b3_input', shape=(number_of_champions))
-	input_b4 = Input(name='b4_input', shape=(number_of_champions))
-	input_b5 = Input(name='b5_input', shape=(number_of_champions))
+	input_b1 = Input(name='b1_input', shape=(champ_lib.n))
+	input_b2 = Input(name='b2_input', shape=(champ_lib.n))
+	input_b3 = Input(name='b3_input', shape=(champ_lib.n))
+	input_b4 = Input(name='b4_input', shape=(champ_lib.n))
+	input_b5 = Input(name='b5_input', shape=(champ_lib.n))
 
-	input_r1 = Input(name='r1_input', shape=(number_of_champions))
-	input_r2 = Input(name='r2_input', shape=(number_of_champions))
-	input_r3 = Input(name='r3_input', shape=(number_of_champions))
-	input_r4 = Input(name='r4_input', shape=(number_of_champions))
-	input_r5 = Input(name='r5_input', shape=(number_of_champions))
+	input_r1 = Input(name='r1_input', shape=(champ_lib.n))
+	input_r2 = Input(name='r2_input', shape=(champ_lib.n))
+	input_r3 = Input(name='r3_input', shape=(champ_lib.n))
+	input_r4 = Input(name='r4_input', shape=(champ_lib.n))
+	input_r5 = Input(name='r5_input', shape=(champ_lib.n))
 
 	#break down input champion vectors into a dense "feature" vector
 	champion_dense = Dense(5, activation='relu')
@@ -77,16 +69,16 @@ def output_model(model, name:str):
 
 def arrange_input(games):
 	return {
-		"b1_input": np.array([vector_from_champion_id(id) for id in games[:,2]]),
-		"b2_input": np.array([vector_from_champion_id(id) for id in games[:,3]]),
-		"b3_input": np.array([vector_from_champion_id(id) for id in games[:,4]]),
-		"b4_input": np.array([vector_from_champion_id(id) for id in games[:,5]]),
-		"b5_input": np.array([vector_from_champion_id(id) for id in games[:,6]]),
-		"r1_input": np.array([vector_from_champion_id(id) for id in games[:,7]]),
-		"r2_input": np.array([vector_from_champion_id(id) for id in games[:,8]]),
-		"r3_input": np.array([vector_from_champion_id(id) for id in games[:,9]]),
-		"r4_input": np.array([vector_from_champion_id(id) for id in games[:,10]]),
-		"r5_input": np.array([vector_from_champion_id(id) for id in games[:,11]])
+		"b1_input": np.array([champ_lib.vector_from_champion_id(id) for id in games[:,2]]),
+		"b2_input": np.array([champ_lib.vector_from_champion_id(id) for id in games[:,3]]),
+		"b3_input": np.array([champ_lib.vector_from_champion_id(id) for id in games[:,4]]),
+		"b4_input": np.array([champ_lib.vector_from_champion_id(id) for id in games[:,5]]),
+		"b5_input": np.array([champ_lib.vector_from_champion_id(id) for id in games[:,6]]),
+		"r1_input": np.array([champ_lib.vector_from_champion_id(id) for id in games[:,7]]),
+		"r2_input": np.array([champ_lib.vector_from_champion_id(id) for id in games[:,8]]),
+		"r3_input": np.array([champ_lib.vector_from_champion_id(id) for id in games[:,9]]),
+		"r4_input": np.array([champ_lib.vector_from_champion_id(id) for id in games[:,10]]),
+		"r5_input": np.array([champ_lib.vector_from_champion_id(id) for id in games[:,11]])
 	}
 
 

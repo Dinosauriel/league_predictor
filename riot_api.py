@@ -28,17 +28,3 @@ def getMatchHistory(account_id: str):
 
 def getMatchInfo(match_id: int):
 	return get("/lol/match/v4/matches/" + str(match_id))
-
-def getChampionLists():
-	champs = get_raw(cfg.champions_json_url)["data"]
-
-	#print(champs)
-
-	ids = []
-	names = []
-	for key in champs:
-		champ = champs[key]
-		ids.append(int(champ["key"]))
-		names.append(champ["name"])
-
-	return (ids, names)
