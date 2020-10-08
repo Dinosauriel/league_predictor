@@ -1,0 +1,41 @@
+{
+	"gameId": 4857520743,
+	"mapId": 11,
+	"gameMode": "CLASSIC",
+	"gameType": "CUSTOM_GAME",
+	"participants": [
+		{
+			"teamId": 100,
+			"spell1Id": 4,
+			"spell2Id": 7,
+			"championId": 62,
+			"profileIconId": 4698,
+			"summonerName": "honolulu777",
+			"bot": false,
+			"summonerId": "CmONEJydDLTB1aolXK51G5ZU7TBjs7PSoGe3b1XfZROaLPE",
+			"gameCustomizationObjects": [],
+			"perks": {
+				"perkIds": [
+					8112,
+					8126,
+					8138,
+					8135,
+					8275,
+					8236,
+					5008,
+					5008,
+					5002
+				],
+				"perkStyle": 8100,
+				"perkSubStyle": 8200
+			}
+		}
+	],
+	"observers": {
+		"encryptionKey": "k28GzJv+c1eqbKepTi21yrurDj0lqlZB"
+	},
+	"platformId": "EUW1",
+	"bannedChampions": [],
+	"gameStartTime": 0,
+	"gameLength": 0
+}
