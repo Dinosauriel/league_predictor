@@ -3,6 +3,7 @@ config.py
 example_game.json
 games.csv
 scrape_cache
+_lake
 lake
 stats.json
 model
