@@ -11,8 +11,25 @@
 	<body>
 		<div id="app">
 			<template v-if="isInGame && championsAreLoaded">
-				<h1>{{ activeGameData.activePlayer.summonerName }}</h1>
+				<h1>{{ summonerName }}</h1>
 			</template>
+
+			<div v-if="championsAreLoaded">
+				<div>
+					<champion-card :player="composition.blue.top" :champions="allChampions"></champion-card>
+					<champion-card :player="composition.blue.jgl" :champions="allChampions"></champion-card>
+					<champion-card :player="composition.blue.mid" :champions="allChampions"></champion-card>
+					<champion-card :player="composition.blue.bot" :champions="allChampions"></champion-card>
+					<champion-card :player="composition.blue.sup" :champions="allChampions"></champion-card>
+				</div>
+				<div>
+					<champion-card :player="composition.red.top" :champions="allChampions"></champion-card>
+					<champion-card :player="composition.red.jgl" :champions="allChampions"></champion-card>
+					<champion-card :player="composition.red.mid" :champions="allChampions"></champion-card>
+					<champion-card :player="composition.red.bot" :champions="allChampions"></champion-card>
+					<champion-card :player="composition.red.sup" :champions="allChampions"></champion-card>
+				</div>
+			</div>
 		</div>
 
 		<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>

@@ -1,9 +1,9 @@
-
 var config = {
 	api: {
 		urls: {
 			static: {
-				allChampions: "https://ddragon.leagueoflegends.com/cdn/10.20.1/data/en_US/champion.json"
+				allChampions: "https://ddragon.leagueoflegends.com/cdn/10.20.1/data/en_US/champion.json",
+				singleChampion: "http://ddragon.leagueoflegends.com/cdn/10.20.1/img/champion/"
 			},
 			dynamic: {
 				activeGame: "/active-game/"
@@ -13,13 +13,70 @@ var config = {
 }
 
 
+const championcard = {
+	props: ['player', 'champions'],
+	computed: {
+		champion: function() {
+			return this.champions[this.player.championId]
+		},
+		imageUrl: function() {
+			return config.api.urls.static.singleChampion + this.champion.image.full
+		}
+	},
+	template:
+		`<div v-if="player.championId != -1">
+			{{ player.championId }}
+			<img :src="imageUrl">
+		</div>`
+}
+
 var app = new Vue({
 	el: "#app",
+	components: {
+		"champion-card": championcard
+	},
 	data: {
+		summonerName: "honolulu777",
 		championsAreLoaded: false,
 		isInGame: false,
 		allChampions: {},
-		activeGameData: {}
+		activeGameData: {},
+		composition: {
+			blue: {
+				top: {
+					championId: 1
+				},
+				jgl: {
+					championId: -1
+				},
+				mid: {
+					championId: -1
+				},
+				bot: {
+					championId: -1
+				},
+				sup: {
+					championId: -1
+				}
+			},
+			red: {
+				top: {
+					championId: -1
+				},
+				jgl: {
+					championId: -1
+				},
+				mid: {
+					championId: -1
+				},
+				bot: {
+					championId: -1
+				},
+				sup: {
+					championId: -1
+				}
+			}
+		}
 	},
 	created: function() {
 		this.loadAllChampions()
@@ -29,10 +86,12 @@ var app = new Vue({
 		loadAllChampions: function() {
 			var v = this
 
-			axios.get(config.urls.static.allChampions)
+			axios.get(config.api.urls.static.allChampions)
 				.then(function (response) {
 					console.log("loaded all champions")
-					v.allChampions = response.data.data
+					for ([key, value] of Object.entries(response.data.data)) {
+						v.allChampions[value.key] = value
+					}
 					v.championsAreLoaded = true
 				})
 				.catch(function (error) {
@@ -42,21 +101,20 @@ var app = new Vue({
 		loadActiveGameData: function() {
 			var v = this
 
-			axios.get(config.urls.local.allGameData)
+			axios.get(config.api.urls.dynamic.activeGame + v.summonerName)
 				.then(function (response) {
 					console.log("loaded active game data")
 					v.activeGameData = response.data
 					v.isInGame = true
 				})
 				.catch(function (error) {
-					console.error("error loading active game data " + error)
 					v.isInGame = false
 				})
 		}
 	},
 	computed: {
-		summonerName: function() {
-			return this.activeGameData.activePlayer.summonerName
+		fasd: function() {
+			return this.summonerName
 		}
 	}
 })

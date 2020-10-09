@@ -1,12 +1,17 @@
 from flask import Flask
 import riot_api
-import json
 
 app = Flask("league_predictor")
 
+@app.route("/main.js")
+def main_js():
+	with open("web/main.js", "r") as f:
+		return f.read()
+
 @app.route("/")
 def index():
-	return "Hi"
+	with open("web/index.html", "r") as f:
+		return f.read()
 
 @app.route("/active-game/<summoner_name>")
 def active_game(summoner_name):
@@ -22,4 +27,4 @@ def active_game(summoner_name):
 		print(e)
 		return "no active game found", 404
 
-	return json.dumps(active_game_info)
+	return active_game_info
