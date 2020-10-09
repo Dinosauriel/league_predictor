@@ -13,21 +13,63 @@ var config = {
 }
 
 
+const championSearchCard = {
+	props: ['champion'],
+	emits: ['champion-selected'],
+	template: `
+		<button class="dropdown-item" type="button" @click="$emit( 'champion-selected')">{{ champion.name }}</button>
+	`
+}
+
 const championcard = {
-	props: ['player', 'champions'],
+	data: function() { return {
+		championSearchTerm: ""
+	}},
+	components: {
+		"champion-search-card": championSearchCard
+	},
+	props: ['id', 'player', 'champions'],
 	computed: {
 		champion: function() {
 			return this.champions[this.player.championId]
 		},
 		imageUrl: function() {
 			return config.api.urls.static.singleChampion + this.champion.image.full
+		},
+		buttonId: function() {
+			return this.id + "-select-champion-button"
+		},
+		championSearchResults() {
+			let results = {}
+			for (key in this.champions) {
+				if (this.champions[key].name.toLowerCase().includes(this.championSearchTerm.toLowerCase())) {
+					results[key] = this.champions[key]
+				}
+			}
+			return results
 		}
 	},
 	template:
-		`<div v-if="player.championId != -1">
-			{{ player.championId }}
-			<img :src="imageUrl">
-		</div>`
+		`<div class="card" v-if="player.championId != -1">
+		<img :src="imageUrl" class="card-img-top">
+		<div class="card-body">
+			<div class="card-title">{{ champion.name }}</div>
+			<div class="dropdown">
+				<button type="button" class="btn btn-outline-secondary dropdown-toggle" :id="buttonId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Change
+				</button>
+				<div class="dropdown-menu" :aria-labelledby="buttonId">
+					<form>
+						<input v-model="championSearchTerm" class="form-control" type="text" placeholder="Search">
+					</form>
+					<div class="dropdown-divider"></div>
+					<div class="overflow-auto" style="max-height: 400px">
+						<champion-search-card @champion-selected="player.championId = c.key" v-for="c in championSearchResults" :champion="c"></champion-search-card>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>`
 }
 
 var app = new Vue({
@@ -80,7 +122,7 @@ var app = new Vue({
 	},
 	created: function() {
 		this.loadAllChampions()
-		this.loadActiveGameData()
+		//this.loadActiveGameData()
 	},
 	methods: {
 		loadAllChampions: function() {
