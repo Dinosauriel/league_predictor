@@ -34,7 +34,10 @@ const championcard = {
 			return this.champions[this.player.championId]
 		},
 		imageUrl: function() {
-			return config.api.urls.static.singleChampion + this.champion.image.full
+			if (this.championIsSelected) {
+				return config.api.urls.static.singleChampion + this.champion.image.full
+			}
+			return ""
 		},
 		buttonId: function() {
 			return this.id + "-select-champion-button"
@@ -47,24 +50,39 @@ const championcard = {
 				}
 			}
 			return results
+		},
+		championIsSelected() {
+			return this.player.championId != -1
+		},
+	},
+	mounted() {
+		$("#" + this.id + " .dropdown").on("shown.bs.dropdown", this.selectSearchField)
+	},
+	methods: {
+		selectSearchField(event) {
+			$("#" + this.id + " input").select()
 		}
 	},
 	template:
-		`<div class="card" v-if="player.championId != -1">
-		<img :src="imageUrl" class="card-img-top">
+		`<div :id="id" class="card mt-2 mb-2">
 		<div class="card-body">
-			<div class="card-title">{{ champion.name }}</div>
-			<div class="dropdown">
-				<button type="button" class="btn btn-outline-secondary dropdown-toggle" :id="buttonId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					Change
-				</button>
-				<div class="dropdown-menu" :aria-labelledby="buttonId">
-					<form>
-						<input v-model="championSearchTerm" class="form-control" type="text" placeholder="Search">
-					</form>
-					<div class="dropdown-divider"></div>
-					<div class="overflow-auto" style="max-height: 400px">
-						<champion-search-card @champion-selected="player.championId = c.key" v-for="c in championSearchResults" :champion="c"></champion-search-card>
+			<div class="media">
+				<img :src="imageUrl" class="mr-3 w-25">
+				<div class="media-body">
+					<div class="card-title">{{ championIsSelected ? champion.name : "no champion" }}</div>
+					<div class="dropdown">
+						<button type="button" class="btn btn-outline-secondary dropdown-toggle" :id="buttonId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Change
+						</button>
+						<div class="dropdown-menu" :aria-labelledby="buttonId">
+							<form>
+								<input v-model="championSearchTerm" class="form-control" type="text" placeholder="Search">
+							</form>
+							<div class="dropdown-divider"></div>
+							<div class="overflow-auto" style="max-height: 400px">
+								<champion-search-card @champion-selected="player.championId = c.key" :key="c.id" v-for="c in championSearchResults" :champion="c"></champion-search-card>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -86,7 +104,7 @@ var app = new Vue({
 		composition: {
 			blue: {
 				top: {
-					championId: 1
+					championId: -1
 				},
 				jgl: {
 					championId: -1
@@ -155,8 +173,6 @@ var app = new Vue({
 		}
 	},
 	computed: {
-		fasd: function() {
-			return this.summonerName
-		}
+
 	}
 })

@@ -18,15 +18,15 @@
 
 			<div class="container">
 				<div class="row" v-if="championsAreLoaded">
-					<div class="col">
+					<div class="col-4">
 						<champion-card id="btop" :player="composition.blue.top" :champions="allChampions"></champion-card>
 						<champion-card id="bjgl" :player="composition.blue.jgl" :champions="allChampions"></champion-card>
 						<champion-card id="bmid" :player="composition.blue.mid" :champions="allChampions"></champion-card>
 						<champion-card id="bbot" :player="composition.blue.bot" :champions="allChampions"></champion-card>
 						<champion-card id="bsup" :player="composition.blue.sup" :champions="allChampions"></champion-card>
 					</div>
-					<div class="col-8"></div>
-					<div class="col">
+					<div class="col-4"></div>
+					<div class="col-4">
 						<champion-card id="btop" :player="composition.red.top" :champions="allChampions"></champion-card>
 						<champion-card id="bjgl" :player="composition.red.jgl" :champions="allChampions"></champion-card>
 						<champion-card id="bmid" :player="composition.red.mid" :champions="allChampions"></champion-card>
