@@ -1,17 +1,12 @@
 from flask import Flask
+from flask.helpers import send_file, url_for
 import riot_api
 
-app = Flask("league_predictor")
-
-@app.route("/main.js")
-def main_js():
-	with open("web/main.js", "r") as f:
-		return f.read()
+app = Flask("league_predictor", static_folder="web/static")
 
 @app.route("/")
 def index():
-	with open("web/index.html", "r") as f:
-		return f.read()
+	return send_file("web/index.html")
 
 @app.route("/active-game/<summoner_name>")
 def active_game(summoner_name):

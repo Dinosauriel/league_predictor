@@ -12,7 +12,6 @@ var config = {
 	}
 }
 
-
 const championSearchCard = {
 	props: ['champion'],
 	emits: ['champion-selected'],
@@ -44,7 +43,7 @@ const championcard = {
 		},
 		championSearchResults() {
 			let results = {}
-			for (key in this.champions) {
+			for (var key in this.champions) {
 				if (this.champions[key].name.toLowerCase().includes(this.championSearchTerm.toLowerCase())) {
 					results[key] = this.champions[key]
 				}
@@ -69,7 +68,8 @@ const championcard = {
 			<div class="media">
 				<img :src="imageUrl" class="mr-3 w-25">
 				<div class="media-body">
-					<div class="card-title">{{ championIsSelected ? champion.name : "no champion" }}</div>
+					<h5 class="card-title">{{ championIsSelected ? champion.name : "no champion" }}</h5>
+					<h6 class="card-subtitle mb-2 text-muted">{{ player.positionName }}</h6>
 					<div class="dropdown">
 						<button type="button" class="btn btn-outline-secondary dropdown-toggle" :id="buttonId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							Change
@@ -104,35 +104,45 @@ var app = new Vue({
 		composition: {
 			blue: {
 				top: {
+					positionName: "Top",
 					championId: -1
 				},
 				jgl: {
+					positionName: "Jungle",
 					championId: -1
 				},
 				mid: {
+					positionName: "Mid",
 					championId: -1
 				},
 				bot: {
+					positionName: "Bottom",
 					championId: -1
 				},
 				sup: {
+					positionName: "Support",
 					championId: -1
 				}
 			},
 			red: {
 				top: {
+					positionName: "Top",
 					championId: -1
 				},
 				jgl: {
+					positionName: "Jungle",
 					championId: -1
 				},
 				mid: {
+					positionName: "Mid",
 					championId: -1
 				},
 				bot: {
+					positionName: "Bottom",
 					championId: -1
 				},
 				sup: {
+					positionName: "Support",
 					championId: -1
 				}
 			}
@@ -148,11 +158,11 @@ var app = new Vue({
 
 			axios.get(config.api.urls.static.allChampions)
 				.then(function (response) {
-					console.log("loaded all champions")
-					for ([key, value] of Object.entries(response.data.data)) {
+					for (var [key, value] of Object.entries(response.data.data)) {
 						v.allChampions[value.key] = value
 					}
 					v.championsAreLoaded = true
+					console.log("loaded all champions")
 				})
 				.catch(function (error) {
 					console.error("error loading all champions " + error)
