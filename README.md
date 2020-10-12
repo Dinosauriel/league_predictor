@@ -26,7 +26,7 @@ The project is divided into several scripts:
 To get started, copy the file `config.example.py` to `config.py` . In `config.py` you will have to to change the values `api_key` and `root_summoner_name`. Depending on your region, you may also have to change `host`.
 
 ### `champions.py`
-asdf
+This is a supporting class that manages champions.
 
 ### `scrape_games.py`
 This script uses the Riot API to search for games. It stores any scraped games as json in the folder `lake/`. In one execution, it scrapes as many games as defined in `config.games_per_scrape`. It keeps state in the folder `scrape_cache/`, so you can run the script multiple times without scraping duplicate games. To reset, just delete the files in `scrape_cache/`.
@@ -35,4 +35,10 @@ This script uses the Riot API to search for games. It stores any scraped games a
 This script iterates through all the games in the folder `lake/` and extracts the relevant information for the neural net. It stores (appends) the output in `processed_games.csv`.
 
 ### `train_nn.py`
-asdf
+This script creates a new neural net and trains it using the games stored in `preprocessed_games.csv`. It stores the model itself in `model/classifier.weights/` and some metadata in `model/`.
+
+### `predict_nn.py`
+This script loads the neural net from `model/classifier.weights`.
+
+### `web.py`
+This script implements the webinterface.
