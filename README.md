@@ -41,4 +41,16 @@ This script creates a new neural net and trains it using the games stored in `pr
 This script loads the neural net from `model/classifier.weights`.
 
 ### `web.py`
-This script implements the webinterface.
+This script implements the webinterface using the flask [https://flask.palletsprojects.com] python module.
+To start the server *for development*, use:
+$bash:
+```
+export FLASK_APP=web.py
+python -m flask run
+```
+
+PowerShell:
+```
+$env:FLASK_APP = "web.py"
+python -m flask run
+```
