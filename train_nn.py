@@ -4,7 +4,6 @@ import numpy as np
 import config as cfg
 import os
 import tensorflow as tf
-import tensorflowjs as tfjs
 from tensorflow.keras import Model
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout
@@ -67,8 +66,6 @@ def output_model(model, name:str):
 
 	tf.keras.utils.plot_model(model, to_file="model/" + name + ".png", show_shapes=True, dpi=200)
 	model.save("model/" + name + ".weights")
-
-	tfjs.converters.save_keras_model(model, "model/js-format")
 
 def arrange_input(games):
 	return {

@@ -97,8 +97,6 @@ var app = new Vue({
 	},
 	data: {
 		summonerName: "honolulu777",
-		predictor: {},
-		predictorIsLoaded: false,
 		championsAreLoaded: false,
 		isInGame: false,
 		allChampions: {},
@@ -152,7 +150,6 @@ var app = new Vue({
 	},
 	created: function() {
 		this.loadAllChampions()
-		this.loadPredictor()
 		//this.loadActiveGameData()
 	},
 	methods: {
@@ -183,52 +180,23 @@ var app = new Vue({
 				.catch(function (error) {
 					v.isInGame = false
 				})
-		},
-		loadPredictor: function() {
-			var v = this
-			tf.loadLayersModel("/static/predictor/model.json")
-				.then(function(predictor) {
-					v.predictor = predictor
-					v.predictorIsLoaded = true
-				})
-
 		}
 	},
 	computed: {
 		prediction: function() {
 
-			if (this.predictorIsLoaded) {
-				var compositionVector = [ 
-					this.composition.blue.top.championId,
-					this.composition.blue.jgl.championId,
-					this.composition.blue.mid.championId,
-					this.composition.blue.bot.championId,
-					this.composition.blue.sup.championId,
-					this.composition.red.top.championId,
-					this.composition.red.jgl.championId,
-					this.composition.red.mid.championId,
-					this.composition.red.bot.championId,
-					this.composition.red.sup.championId,
-				]
-
-				console.log(compositionVector)
-
-				for (var championId of compositionVector) {
-					if (championId == -1) {
-						return 0
-					}
-				}
-
-				try {
-					var prediction = this.predictor.predict(compositionVector)
-					console.log(prediction)
-				} catch (e) {
-					console.log(e)
-				}
-
-				return 0
-			}
-
+			var compositionVector = [ 
+				this.composition.blue.top.championId,
+				this.composition.blue.jgl.championId,
+				this.composition.blue.mid.championId,
+				this.composition.blue.bot.championId,
+				this.composition.blue.sup.championId,
+				this.composition.red.top.championId,
+				this.composition.red.jgl.championId,
+				this.composition.red.mid.championId,
+				this.composition.red.bot.championId,
+				this.composition.red.sup.championId,
+			]
 
 			return 0
 		}
