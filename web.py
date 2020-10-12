@@ -1,5 +1,5 @@
 from flask import Flask
-from flask.helpers import send_file, url_for
+from flask.helpers import send_file
 import riot_api
 
 app = Flask("league_predictor", static_folder="web/static")

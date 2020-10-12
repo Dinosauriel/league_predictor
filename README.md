@@ -11,6 +11,8 @@ Training a NN to predict my league of legends games :)
 	- glob
 	- os
 	- pydot (for model plotting)
+	- tensorflowjs
+	- flask
 - Graphviz (for model plotting) [https://graphviz.gitlab.io/download/]
 
 ### GPU Support (optional)
