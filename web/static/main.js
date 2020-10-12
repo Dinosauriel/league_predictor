@@ -6,7 +6,8 @@ var config = {
 				singleChampion: "http://ddragon.leagueoflegends.com/cdn/10.20.1/img/champion/"
 			},
 			dynamic: {
-				activeGame: "/active-game/"
+				activeGame: "/active-game/",
+				predict: "/predict"
 			}
 		}
 	}
@@ -98,6 +99,7 @@ var app = new Vue({
 	data: {
 		summonerName: "honolulu777",
 		championsAreLoaded: false,
+		prediction: undefined,
 		isInGame: false,
 		allChampions: {},
 		activeGameData: {},
@@ -180,25 +182,69 @@ var app = new Vue({
 				.catch(function (error) {
 					v.isInGame = false
 				})
+		},
+		loadPrediction: function() {
+			this.prediction = undefined
+	
+			var compositionVector = {
+				"b1": this.composition.blue.top.championId,
+				"b2": this.composition.blue.jgl.championId,
+				"b3": this.composition.blue.mid.championId,
+				"b4": this.composition.blue.bot.championId,
+				"b5": this.composition.blue.sup.championId,
+				"r1": this.composition.red.top.championId,
+				"r2": this.composition.red.jgl.championId,
+				"r3": this.composition.red.mid.championId,
+				"r4": this.composition.red.bot.championId,
+				"r5": this.composition.red.sup.championId,
+			}
+	
+			for (var [key, id] of Object.entries(compositionVector)) {
+				if (id == -1) {
+					return
+				}
+			}
+	
+			var v = this
+	
+			axios.post(config.api.urls.dynamic.predict, null, { params: compositionVector })
+				.then(function (response) {
+					v.prediction = response.data.prediction
+				})
+				.catch(function(error) {
+					console.error("error loading prediction " + error)
+				})
 		}
 	},
 	computed: {
-		prediction: function() {
-
-			var compositionVector = [ 
-				this.composition.blue.top.championId,
-				this.composition.blue.jgl.championId,
-				this.composition.blue.mid.championId,
-				this.composition.blue.bot.championId,
-				this.composition.blue.sup.championId,
-				this.composition.red.top.championId,
-				this.composition.red.jgl.championId,
-				this.composition.red.mid.championId,
-				this.composition.red.bot.championId,
-				this.composition.red.sup.championId,
-			]
-
-			return 0
+		isEven: function() {
+			if (this.prediction == undefined) {
+				return undefined
+			}
+			return this.prediction == 0.5
+		},
+		blueWins: function() {
+			if (this.prediction == undefined) {
+				return undefined
+			}
+			return this.prediction > 0.5
+		},
+		redWinds: function() {
+			if (this.prediction == undefined) {
+				return undefined
+			}
+			return this.prediction > 0.5
+		},
+		predictionPercentage: function() {
+			return (Math.round(this.prediction * 10000) / 100) + "%"
+		}
+	},
+	watch: {
+		composition: {
+			handler: function(newComp, oldComp) {
+				this.loadPrediction()
+			},
+			deep: true
 		}
 	}
 })
