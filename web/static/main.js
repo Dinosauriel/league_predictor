@@ -97,12 +97,12 @@ var app = new Vue({
 		"champion-card": championcard
 	},
 	data: {
-		summonerName: "honolulu777",
+		summonerName: "",
+		isLoadingActiveGame: false,
+		loadingActiveGameFailed: false,
 		championsAreLoaded: false,
 		prediction: undefined,
-		isInGame: false,
 		allChampions: {},
-		activeGameData: {},
 		composition: {
 			blue: {
 				top: {
@@ -170,17 +170,51 @@ var app = new Vue({
 					console.error("error loading all champions " + error)
 				})
 		},
-		loadActiveGameData: function() {
+		loadActiveGameData: function(event) {
+			event.preventDefault()
 			var v = this
+			v.isLoadingActiveGame = true
 
 			axios.get(config.api.urls.dynamic.activeGame + v.summonerName)
 				.then(function (response) {
 					console.log("loaded active game data")
-					v.activeGameData = response.data
-					v.isInGame = true
+					if (response.data.blue[0] != undefined) {
+						v.composition.blue.top.championId = response.data.blue[0]
+					}
+					if (response.data.blue[1] != undefined) {
+						v.composition.blue.jgl.championId = response.data.blue[1]
+					}
+					if (response.data.blue[2] != undefined) {
+						v.composition.blue.mid.championId = response.data.blue[2]
+					}
+					if (response.data.blue[3] != undefined) {
+						v.composition.blue.bot.championId = response.data.blue[3]
+					}
+					if (response.data.blue[4] != undefined) {
+						v.composition.blue.sup.championId = response.data.blue[4]
+					}
+					if (response.data.red[0] != undefined) {
+						v.composition.red.top.championId = response.data.red[0]
+					}
+					if (response.data.red[1] != undefined) {
+						v.composition.red.jgl.championId = response.data.red[1]
+					}
+					if (response.data.red[2] != undefined) {
+						v.composition.red.mid.championId = response.data.red[2]
+					}
+					if (response.data.red[3] != undefined) {
+						v.composition.red.bot.championId = response.data.red[3]
+					}
+					if (response.data.red[4] != undefined) {
+						v.composition.red.sup.championId = response.data.red[4]
+					}
+
+					v.isLoadingActiveGame = false
+					v.loadingActiveGameFailed = false
 				})
 				.catch(function (error) {
-					v.isInGame = false
+					v.isLoadingActiveGame = false
+					v.loadingActiveGameFailed = true
 				})
 		},
 		loadPrediction: function() {
@@ -200,7 +234,7 @@ var app = new Vue({
 			}
 	
 			for (var [key, id] of Object.entries(compositionVector)) {
-				if (id == -1) {
+				if (id == -1 || typeof id == "undefined") {
 					return
 				}
 			}

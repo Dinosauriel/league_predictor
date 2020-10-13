@@ -2,6 +2,7 @@ from flask import Flask, request
 from flask.helpers import send_file
 from predict_nn import Predictor
 import riot_api
+import games
 
 app = Flask("league_predictor", static_folder="web/static")
 
@@ -20,12 +21,14 @@ def active_game(summoner_name):
 		return "summoner name not found", 404
 
 	try:
-		active_game_info = riot_api.getActiveGame(encrypted_summoner_id)
+		active_game = riot_api.getActiveGame(encrypted_summoner_id)
 	except Exception as e:
 		print(e)
 		return "no active game found", 404
 
-	return active_game_info
+	ids = games.extract_champion_ids_from_active_game(active_game)
+
+	return ids
 
 @app.route("/predict", methods=["POST"])
 def predict_game():

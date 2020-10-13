@@ -13,6 +13,14 @@
 			<header>
 				<nav class="navbar navbar-dark bg-dark">
 					<span class="navbar-brand">League of Legends Oracle</span>
+					<form class="form-inline" @submit="loadActiveGameData">
+						<input class="form-control mr-sm-2" type="search" v-model="summonerName" placeholder="Summoner Name (EUW)" aria-label="Load">
+						<button class="btn btn-outline-success my-2 my-sm-0">
+							Load Active Game
+							<span class="spinner-border spinner-border-sm text-success" role="status" v-if="isLoadingActiveGame"></span>
+						</button>
+						<span class="badge badge-danger ml-2" v-if="loadingActiveGameFailed">Could not load current game</span>
+					</form>
 					<ul class="navbar-nav ml-md-auto">
 						<li class="nav-item">
 							<a class="nav-link pl-2 pr-1 mx-1 py-3 my-n2" href="https://github.com/Dinosauriel/league_predictor" target="_blank" rel="noopener" aria-label="GitHub">
@@ -49,6 +57,7 @@
 						</div>
 						<div class="card mt-4 text-center" v-else>
 							<div class="card-body text-white" :class="blueWins ? 'bg-primary' : 'bg-danger'">
+								<span class="small">Blue team win probability:</span>
 								<h5>{{ predictionPercentage }}</h5>
 								<h6>{{ blueWins ? 'Blue' : 'Red' }} side wins!</h6>
 							</div>
@@ -64,10 +73,6 @@
 					</div>
 				</div>
 			</div>
-
-			<template v-if="isInGame && championsAreLoaded">
-				<h1>{{ summonerName }}</h1>
-			</template>
 		</div>
 
 		<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
