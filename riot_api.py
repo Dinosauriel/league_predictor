@@ -23,6 +23,12 @@ def get(path: str, parameters: dict={}):
 def getAccountId(summoner_name: str):
 	return get("/lol/summoner/v4/summoners/by-name/" + summoner_name)["accountId"]
 
+def getSummonerId(summoner_name: str):
+	return get("/lol/summoner/v4/summoners/by-name/" + summoner_name)["id"]
+
+def getActiveGame(summoner_id: str):
+	return get("/lol/spectator/v4/active-games/by-summoner/" + summoner_id)
+
 def getMatchHistory(account_id: str):
 	return get("/lol/match/v4/matchlists/by-account/" + account_id, parameters={'queue': cfg.queue_ids})["matches"]
 
