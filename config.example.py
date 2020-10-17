@@ -18,6 +18,8 @@ requests_per_2_minutes = 100
 
 #how many games should be scraped when scrape_games is run once?
 games_per_scrape = 1800
+#the preprocessor filters out any games older than this patch.
+preprocessor_min_patch = "10.16"
 
 #number of threads for executing statistics
 number_of_threads = 8

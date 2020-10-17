@@ -1,4 +1,42 @@
+def patch_is_greater_than(a: str, b: str):
+	"""
+	Returns true if patch a is 'higher' than b
+
+	2.0, 1.9 -> true
+	"""
+	al = a.split(".")
+	bl = b.split(".")
+
+	for i in range(min(len(al), len(bl))):
+		if int(al[i]) > int(bl[i]):
+			return True
+		if int(al[i]) < int(bl[i]):
+			return False
+
+	return False
+
+def patch_is_equal(a: str, b: str):
+	"""
+	Returns true if patch a is 'equal' to b
+
+	2.0.2, 2.0 -> true
+	"""
+	al = a.split(".")
+	bl = b.split(".")
+
+	for i in range(min(len(al), len(bl))):
+		if int(al[i]) != int(bl[i]):
+			return False
+
+	return True
+
+def patch_is_greater_or_equal(a: str, b: str):
+	return patch_is_greater_than(a, b) or patch_is_equal(a, b)
+
 def extract_team_composition(team):
+	#t = [(p["timeline"]["role"], p["timeline"]["lane"]) for p in team]
+
+
 	composition = {}
 	for participant in team:
 		role = participant["timeline"]["role"]
@@ -12,7 +50,7 @@ def extract_team_composition(team):
 		elif lane == "TOP":
 			position = "top"
 		elif lane == "BOTTOM" or lane == "BOT":
-			if role == "DUO_CARRY" or "DUO":
+			if role == "DUO_CARRY" or role == "DUO":
 				position = "bottom"
 			elif role == "DUO_SUPPORT":
 				position = "support"
@@ -21,16 +59,16 @@ def extract_team_composition(team):
 			raise Exception("could not assign a position for " + role + ", " + lane)
 
 		if position in composition:
-			raise Exception("found duplicate position")
+			raise Exception("found duplicate position " + position)
 
 		composition[position] = participant
 
-	return composition
+	return [composition["top"], composition["jungle"], composition["mid"], composition["bottom"], composition["support"]]
 
 
 def extract_team_compositions(game):
 	team_blue = [participant for participant in game["participants"] if participant["teamId"] == 100]
-	team_red = [participant for participant in game["participants"] if participant["teamId"] == 200]
+	team_red  = [participant for participant in game["participants"] if participant["teamId"] == 200]
 
 	assert len(team_blue) == 5 and len(team_red) == 5
 
