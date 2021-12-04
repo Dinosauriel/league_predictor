@@ -26,7 +26,7 @@ def get_classifier():
 	input_r5 = Input(name='r5_input', shape=(champ_lib.n))
 
 	#break down input champion vectors into a dense "feature" vector
-	champion_dense = Dense(5, activation='relu')
+	champion_dense = Dense(10, activation='relu')
 
 	#share weights of champion feature layer between all champions
 	features_b1 = champion_dense(input_b1)
@@ -41,13 +41,25 @@ def get_classifier():
 	features_r4 = champion_dense(input_r4)
 	features_r5 = champion_dense(input_r5)
 
+	top_conc = Concatenate()([features_b1, features_r1])
+	jgl_conc = Concatenate()([features_b2, features_r2])
+	mid_conc = Concatenate()([features_b3, features_r3])
+	adc_conc = Concatenate()([features_b4, features_r4])
+	sup_conc = Concatenate()([features_b5, features_r5])
+
+	top_matchup = Dense(8, activation='relu')(top_conc)
+	jgl_matchup = Dense(8, activation='relu')(jgl_conc)
+	mid_matchup = Dense(8, activation='relu')(mid_conc)
+	adc_matchup = Dense(8, activation='relu')(adc_conc)
+	sup_matchup = Dense(8, activation='relu')(sup_conc)
+
 	team_b = Concatenate()([features_b1, features_b2, features_b3, features_b4, features_b5])
 	team_r = Concatenate()([features_r1, features_r2, features_r3, features_r4, features_r5])
 
-	team_b_dense = Dense(15, activation='relu')(team_b)
-	team_r_dense = Dense(15, activation='relu')(team_r)
+	team_b_dense = Dense(30, activation='relu')(team_b)
+	team_r_dense = Dense(30, activation='relu')(team_r)
 
-	game = Concatenate()([team_b_dense, team_r_dense])
+	game = Concatenate()([team_b_dense, team_r_dense, top_matchup, jgl_matchup, mid_matchup, adc_matchup, sup_matchup])
 	out = Dense(1, activation='sigmoid')(game)
 
 	classifier = Model(inputs=[input_b1, input_b2, input_b3, input_b4, input_b5, input_r1, input_r2, input_r3, input_r4, input_r5], outputs=out)
@@ -82,7 +94,7 @@ def arrange_input(games):
 	}
 
 
-print("reading and shuffling games..")
+print("reading games..")
 games = np.genfromtxt("games.csv")
 np.random.shuffle(games)
 
@@ -95,6 +107,6 @@ gpus = tf.config.experimental.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(gpus[0], True)
 
 classifier = get_classifier()
-classifier.fit(X, y, epochs=5, validation_split=0.1, batch_size=16)
+classifier.fit(X, y, epochs=5, validation_split=0.05, batch_size=32)
 
 output_model(classifier, "classifier")

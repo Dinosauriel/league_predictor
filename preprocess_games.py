@@ -36,7 +36,7 @@ def preprocess_games():
 			with open(game_json_path, "r") as game_json:
 				game = json.load(game_json)
 				if not filter_game(game):
-					n_filtered_games
+					n_filtered_games += 1
 					continue
 				processed = preprocess_game(game)
 				if processed is None:
@@ -44,7 +44,8 @@ def preprocess_games():
 					continue
 
 				np.savetxt(output_file, [processed], fmt="%d")
+
 	print("total games:", i, ", invalid games:", n_invalid_games, ", filtered games:", n_filtered_games)
-				
+
 
 preprocess_games()
